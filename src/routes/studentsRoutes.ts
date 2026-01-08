@@ -1,14 +1,13 @@
+import { StudentController } from "@/controllers/studentsController";
 import { Router, Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
 
 const studentsRoutes = Router()
+const studentsController = new StudentController
 
-studentsRoutes.get("/", (req: Request, res: Response, next: NextFunction) => {
-    try {
-        return res.json("Requisição GET")
-    } catch(error) {
-        next(error)
-    }
-})
+studentsRoutes.get("/", studentsController.getAll)
+studentsRoutes.get("/:externalId", studentsController.getByExternalId)
+studentsRoutes.post("/", studentsController.register)
+studentsRoutes.patch("/:externalId", studentsController.update)
+studentsRoutes.delete("/:externalId", studentsController.delete)
 
 export { studentsRoutes }
