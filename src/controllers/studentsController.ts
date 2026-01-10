@@ -5,10 +5,27 @@ import { z } from "zod"
 class StudentController {
     async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            const students = await knex("students")
+            const search = String(req.query.search || '').trim()
+
+            let query = knex("students")
                 .select()
-                .where({ is_deleted: false })
+                //.where({ is_deleted: false })
                 .orderBy("name", "asc")
+
+            if (search) {
+                const searchNum = parseInt(search, 10)
+                const hasNum = !isNaN(searchNum)
+
+                query = query.andWhere((qb) => {
+                    qb.whereILike("name", `%${search}%`)
+                        .orWhereILike("email", `%${search}%`)
+                    if(hasNum) {
+                        qb.orWhere("academic_record", searchNum)
+                    }            
+                })
+            }
+
+            const students = await query
 
             return res.json({ results: students })
         } catch(error) {
@@ -40,7 +57,7 @@ class StudentController {
                 name: z.string().trim().min(6),
                 email: z.email(),
                 document: z.int().min(10000000000).max(99999999999)
-            })
+            }).strict()
 
             const { academic_record, name, email, document } = bodySchema.parse(req.body)
 
@@ -59,11 +76,11 @@ class StudentController {
                 .parse(req.params.externalId)
 
             const bodySchema = z.object({
-                name: z.string().trim().min(6),
-                email: z.email()
-            })
+                name: z.string().trim().min(6).optional(),
+                email: z.email().optional()
+            }).strict()
 
-            const { name, email } = bodySchema.parse(req.body)
+            const updateStudent = bodySchema.parse(req.body)
 
             const student = await knex("students")
                 .select()
@@ -75,10 +92,10 @@ class StudentController {
             }
             
             await knex("students")
-                .update({ name, email, updated_at: knex.fn.now() })
+                .update({ ...updateStudent, updated_at: knex.fn.now() })
                 .where({ externalId })
 
-            return res.json()
+            return res.status(204).json()
         } catch(error) {
             next(error)
         }
@@ -95,8 +112,12 @@ class StudentController {
                 .where({ externalId })
                 .first()
 
+            if(student.is_deleted){
+                throw new Error("Student already deleted!")
+            }
+
             if(!student) {
-                throw new Error("Student not found")
+                throw new Error("Student not found!")
             }
 
             await knex("students")
