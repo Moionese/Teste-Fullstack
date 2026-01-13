@@ -66,14 +66,14 @@ PG_PASSWORD=sua_senha
 PG_DATABASE=teste_fullstack
 
 # Server
-PORT=3000
+PORT=3333
 NODE_ENV=development
 ```
 
 **Notas importantes:**
 - Substitua `seu_usuario` e `sua_senha` pelas credenciais do seu PostgreSQL
 - Certifique-se de que o banco de dados `teste_fullstack` existe ou será criado
-- O PORT padrão é 3000, mas você pode alterar conforme necessário
+- O PORT padrão é 3333, mas você pode alterar conforme necessário
 
 ### Passo 4: Execute as migrações do banco de dados
 
@@ -98,7 +98,7 @@ Inicie o servidor em modo watch (recarrega automaticamente quando você altera o
 npm run dev
 ```
 
-O servidor será iniciado em `http://localhost:3000` (ou na porta configurada no `.env`)
+O servidor será iniciado em `http://localhost:3333` (ou na porta configurada no `.env`)
 
 ### Modo Produção
 
@@ -149,7 +149,7 @@ O projeto utiliza **Zod** para validação de dados. Todos os dados recebidos da
 1. **Variáveis de Ambiente**: Não commit o arquivo `.env` no Git. Use `.env.example` como referência
 2. **Migrações**: Sempre execute migrações antes de iniciar a aplicação
 3. **TypeScript**: O projeto utiliza TypeScript, certifique-se de compreender a tipagem
-4. **Port**: Verifique se a porta 3000 está disponível
+4. **Port**: Verifique se a porta 3333 está disponível
 
 ## 🤞 Contribuindo
 
