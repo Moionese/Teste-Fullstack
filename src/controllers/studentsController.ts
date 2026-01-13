@@ -9,7 +9,7 @@ class StudentController {
 
             let query = knex("students")
                 .select()
-                //.where({ is_deleted: false })
+                .where({ is_deleted: false })
                 .orderBy("name", "asc")
 
             if (search) {
